@@ -27,7 +27,8 @@ const createUsersTable = `
         last_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        is_writer BOOLEAN NOT NULL
+        is_writer BOOLEAN NOT NULL,
+        joined_date DATE NOT NULL DEFAULT CURDATE()
     )
 `;
 

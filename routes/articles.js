@@ -5,14 +5,13 @@ const { marked } = require("marked");
 const { log } = require("console");
 const router = express.Router();
 
-router.get("/articles/:filename", (req, res) => {
-  const filename = req.params.filename;
+router.get("/articles/:article_id", (req, res) => {
+  const article_id = req.params.article_id;
+  const filename ="article" + article_id + ".md";
   // the path to the file
   // go up one level
   const parentDir = path.join(__dirname, "..");
   const filepath = path.join(parentDir, "articles", filename);
-
-  log(filepath);
 
   fs.readFile(filepath, "utf8", (err, data) => {
     if (err) {

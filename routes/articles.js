@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const {marked} = require("marked");
+const { marked } = require("marked");
 const { log } = require("console");
 const router = express.Router();
 

@@ -5,7 +5,7 @@ const { marked } = require("marked");
 const { log } = require("console");
 const router = express.Router();
 
-router.get("/articles/:article_id", (req, res) => {
+router.get("/:article_id", (req, res) => {
   const article_id = req.params.article_id;
   const filename ="article" + article_id + ".md";
   // the path to the file

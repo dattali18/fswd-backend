@@ -1,9 +1,13 @@
 const express = require('express');
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const router = express.Router();
 
 const {getUserByEmail, createUser} = require('../models/user.js'); // Assuming you have a User model
+
+require('dotenv').config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -45,7 +49,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).send('Invalid password');
         }
 
-        const token = jwt.sign({ id: user.id }, secret, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: '1h' });
         res.json({ token, user: { id: user.id, user_name: user.user_name, email: user.email, is_writer: user.is_writer } });
     } catch (err) {
         res.status(500).send('Error logging in');

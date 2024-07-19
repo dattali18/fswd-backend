@@ -27,7 +27,7 @@ async function getUserById(id) {
 
 // Get User by Email
 async function getUserByEmail(email) {
-    const rows = await connection.execute(
+    const [rows] = await connection.execute(
         `SELECT * FROM Users WHERE email = ?`,
         [email]
     );

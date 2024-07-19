@@ -5,8 +5,8 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
 let usersRouter = require('./routes/users');
-let { authRouter, auth } = require('./routes/auth'); // Add this line
-let articlesRouter = require('./routes/articles'); // Add this line
+let authRouter = require('./routes/auth');
+let articlesRouter = require('./routes/articles');
 
 let app = express();
 
@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
-// app.use('/auth', authRouter);
+app.use('/auth', authRouter);
 app.use('/articles', articlesRouter);
 
 
@@ -31,7 +31,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

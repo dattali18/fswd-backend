@@ -13,6 +13,9 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post('/register', async (req, res) => {
     const { email, password } = req.body;
+
+    console.log(email, password);
+
     // the rest of the data will be added later
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
@@ -26,9 +29,9 @@ router.post('/register', async (req, res) => {
 
     try {
         await createUser(newUser);
-        res.status(201).send('User created');
+        return res.status(201).send('User created');
     } catch (err) {
-        res.status(500).send('Error creating user');
+        return res.status(500).send('Error creating user');
     }
 });
 
@@ -37,13 +40,17 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await getUserByEmail(email);
+        const [user] = await getUserByEmail(email);
+
+        // console.log(user)
 
         if (!user) {
             return res.status(404).send('User not found');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        // console.log(isPasswordValid)
 
         if (!isPasswordValid) {
             return res.status(401).send('Invalid password');
@@ -56,18 +63,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Middleware to Protect Routes
-const auth = (req, res, next) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
-
-    try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        res.status(401).json({ message: 'Token is not valid' });
-    }
-};
-
-module.exports = { router, auth };
+module.exports = router;

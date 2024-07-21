@@ -1,14 +1,23 @@
 let createError = require('http-errors');
 let express = require('express');
+let cors = require('cors');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+
+let apiRouter = express.Router();
 
 let usersRouter = require('./routes/users');
 let authRouter = require('./routes/auth');
 let articlesRouter = require('./routes/articles');
 
 let app = express();
+
+let corsOptions = {
+  origin: "http://localhost:5173"
+};
+
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,9 +29,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
-app.use('/articles', articlesRouter);
+apiRouter.use('/users', usersRouter);
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/articles", articlesRouter);
+
+app.use('/api', apiRouter);
 
 
 // catch 404 and forward to error handler

@@ -1,4 +1,4 @@
-const connection = require('../config/connection');
+const connection = require('../database/connection');
 
 // Get all likes
 async function allLikes(articleId) {

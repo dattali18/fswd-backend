@@ -4,12 +4,22 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
+const auth = require('../utils/authMiddleware.js');
 
 const {getUserByEmail, createUser} = require('../models/user.js'); // Assuming you have a User model
 
 require('dotenv').config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
+
+router.post('/', auth,  async (req, res) => {
+    // get the user with the id from the parameters of the request
+    const { id } = req.params.userId;
+    const [user] = await getUserById(id);
+
+    // return the user
+    res.json(user);
+});
 
 router.post('/register', async (req, res) => {
     const { email, password } = req.body;

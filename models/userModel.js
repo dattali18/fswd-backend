@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 
 // Database connection
 const connection = require("../database/connection");

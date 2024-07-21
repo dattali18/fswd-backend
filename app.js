@@ -10,6 +10,7 @@ let apiRouter = express.Router();
 let usersRouter = require('./routes/users');
 let authRouter = require('./routes/auth');
 let articlesRouter = require('./routes/articles');
+let likesRouter = require('./routes/likes');
 
 let app = express();
 
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 apiRouter.use('/users', usersRouter);
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/articles", articlesRouter);
+apiRouter.use("/likes", likesRouter);
 
 app.use('/api', apiRouter);
 

@@ -21,7 +21,29 @@ async function getArticleByTitle(title) {
     return rows;
 }
 
+async function getArticleById(article_id)
+{
+    const [rows] = await connection.execute(
+        `SELECT * FROM Articles WHERE id = ?`,
+        [article_id]
+    );
+
+    return rows;
+}
+
+async function updateArticle(article_id, title) {
+
+    const [rows] = await connection.execute(
+        `UPDATE Articles SET title = ? WHERE id = ?`,
+        [title, article_id]
+    );
+
+    return rows;
+}
+
 module.exports = {
     postArticle,
-    getArticleByTitle
+    getArticleByTitle,
+    getArticleById,
+    updateArticle,
 }

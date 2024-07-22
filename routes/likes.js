@@ -21,11 +21,11 @@ router.post("/:articleId", async (req, res) => {
 });
 
 // unlike an article
-router.delete("/:articleId", async (req, res) => {
+router.delete("/:article_id", async (req, res) => {
     // Get the article ID from the request parameters
-    const articleId = req.params.articleId;
+    const articleId = req.params.article_id;
     // Get the user ID from the request body
-    const userId = req.body.userId;
+    const userId = req.body.user_id;
 
     // Delete the like
     try {
@@ -38,8 +38,8 @@ router.delete("/:articleId", async (req, res) => {
 });
 
 // get the count of likes for an article
-router.get("/:articleId/count", async (req, res) => {
-    const articleId = req.params.articleId;
+router.get("/:article_id/count", async (req, res) => {
+    const articleId = req.params.article_id;
 
     try {
         const count = await getLikeCount(articleId);
@@ -51,8 +51,8 @@ router.get("/:articleId/count", async (req, res) => {
 });
 
 // get all the count a user has liked
-router.get("/:userId/count", async (req, res) => {
-    const userId = req.params.userId;
+router.get("/:user_id/count", async (req, res) => {
+    const userId = req.params.user_id;
     try {
         const count = await getUserLikeCount(userId);
         return res.json(count);
@@ -64,7 +64,7 @@ router.get("/:userId/count", async (req, res) => {
 
 // get the count of likes across all articles
 router.get("/count", async (req, res) => {
-    const userId = req.body.userId;
+    const userId = req.body.user_id;
     try {
         const count = await getLikeCountAll(userId);
         return res.json(count);

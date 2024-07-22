@@ -13,4 +13,17 @@
 
 ## Articles
 
-1. `GET - api/articles/:id` - Get an article by id, return an `HTML` page
+1. `GET - api/articles/:id/article` - Get an article by id, return an `HTML` page
+2. `GET - api/articles/:id` - Get an article by id (database object include title etc.)
+3. `POST - api/articles/` - Add an article (`title`, `content`, `writer_id`)
+4. `GET - api/articles/?title=<title>` - return an article with title like <title>
+5. `PUT - api/articles/:id/article` - update the file
+6. `PUT - api/articles/:d` - update the database object
+
+## Likes
+
+1. `POST - api/likes/:article_id` - add a like to the article
+2. `DELETE - api/likes/:article_id` - remove a like from the article
+3. `GET - api/likes/:article_id/count` - get the number of likes for an article
+4. `GET - api/likes/:user_id/count` - get all the count a user has liked
+5. `GET - api/likes/count` - get the count of likes across all articles

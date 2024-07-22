@@ -12,14 +12,14 @@ require("dotenv").config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
-router.post("/", auth, async (req, res) => {
-  // get the user with the id from the parameters of the request
-  const { id } = req.params.userId;
-  const [user] = await getUserById(id);
-
-  // return the user
-  res.json(user);
-});
+// router.post("/", auth, async (req, res) => {
+//   // get the user with the id from the parameters of the request
+//   const { id } = req.params.userId;
+//   const [user] = await getUserById(id);
+//
+//   // return the user
+//   res.json(user);
+// });
 
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;

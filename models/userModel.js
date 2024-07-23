@@ -8,6 +8,15 @@ async function allUsers() {
   return rows;
 }
 
+// Get user by id
+async function getUserById(id) {
+  const [rows] = await connection.execute(
+    `SELECT * FROM Users WHERE id = ?`,
+    [id]
+  );
+  return rows;
+}
+
 // Create User
 async function createUser(user) {
   const { user_name, first_name, last_name, email, password } = user;
@@ -17,16 +26,6 @@ async function createUser(user) {
     [user_name, first_name, last_name, email, password]
   );
   return rows;
-}
-
-// Get User by ID
-async function getUserById(id) {
-  const [response] = await connection.execute(
-    `SELECT * FROM Users WHERE id = ?`,
-    [id]
-  );
-  // console.log(response);
-  return response;
 }
 
 // Get User by Email

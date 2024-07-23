@@ -1,11 +1,28 @@
 const express = require("express");
 const { auth } = require("./auth");
 
-const { allUsers } = require("../models/userModel.js");
-
 let router = express.Router();
 
 let { updateUser, getUserById } = require("../models/userModel.js");
+
+router.get("/:id", async function (req, res, next) {
+  const id = req.params.id;
+
+  try {
+    const rows = await getUserById(id);
+    res.send({
+      status: 200,
+      message: `User ${id} found`,
+      data: rows,
+    });
+  
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "An error occurred while getting the user." });
+  }
+});
 
 /* GET users listing. */
 router.put("/:id", async function (req, res, next) {

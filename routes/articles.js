@@ -85,7 +85,7 @@ router.get("/:article_id", async (req, res) => {
 // PUT - api/articles/:article_id/article
 router.put("/:article_id/article", auth, async (req, res) => {
   const article_id = req.params.article_id;
-  const { title, content } = req.body;
+  const { content } = req.body;
 
   const filename = "article" + article_id + ".md";
 

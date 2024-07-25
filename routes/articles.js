@@ -6,7 +6,7 @@ const { marked } = require("marked");
 
 const auth = require("../utils/authMiddleware")
 
-const { postArticle, getArticleByTitle, getArticleById, updateArticle } = require("../models/articleModel");
+const { postArticle, getArticleByTitle, getArticleById, updateArticle, getAllArticles, getBestArticles } = require("../models/articleModel");
 
 const router = express.Router();
 
@@ -55,13 +55,31 @@ router.post("/", auth, async (req, res) => {
 router.get("/", async (req, res) => {
   const title = req.query.title;
 
+  if(!title) {
+      const articles = await getAllArticles();
+      return res.send(articles)
+  }
+
   const [article] = await getArticleByTitle(title);
 
   if (article) {
-    res.send(article);
+    return res.send(article);
   } else {
-    res.status(404).send("Article not found");
+    return res.status(404).send("Article not found");
   }
+});
+
+// GET - api/articles/best?time_period=day
+router.get("/best", async (req, res) => {
+    const time_period = req.query.time_period;
+
+    // if there is no time_period give the best from last week
+    try {
+        const [articles] = await getBestArticles(time_period || "week");
+        return res.send(articles);
+    } catch (error) {
+        return res.status(500).send("Error getting best articles");
+    }
 });
 
 // GET - api/articles/:article_id

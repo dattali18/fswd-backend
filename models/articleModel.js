@@ -1,7 +1,8 @@
 const connection = require("../database/connection");
 
-async function getBestArticles(time_period, limit=5) {
-    let days = null;
+async function getBestArticles(time_period="week", limit=5) {
+    let days = 7;
+
     switch(time_period) {
         case "week":
             days = 7;
@@ -30,8 +31,6 @@ async function getBestArticles(time_period, limit=5) {
         LIMIT ?`,
         [days, limit]
     );
-
-    // console.log(rows);
 
     return rows;
 }

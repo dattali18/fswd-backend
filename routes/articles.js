@@ -72,12 +72,14 @@ router.get("/", async (req, res) => {
 // GET - api/articles/best?time_period=day
 router.get("/best", async (req, res) => {
     const time_period = req.query.time_period;
+    const limit = req.query.limit;
 
     // if there is no time_period give the best from last week
     try {
-        const [articles] = await getBestArticles(time_period || "week");
+        const articles = await getBestArticles(time_period || "week", limit || 5);
         return res.send(articles);
     } catch (error) {
+        // console.log(error)
         return res.status(500).send("Error getting best articles");
     }
 });

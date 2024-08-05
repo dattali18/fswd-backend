@@ -5,7 +5,7 @@ let router = express.Router();
 
 let { updateUser, getUserById } = require("../models/userModel.js");
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id",  async function (req, res, next) {
   const id = req.params.id;
 
   try {

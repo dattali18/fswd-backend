@@ -5,83 +5,79 @@ require("dotenv").config();
 
 const connection = require("../connection");
 
-// creating the database if not exists
-const dbName = process.env.DB_DATABASE;
+const createDatabaseAndTables = async () => {
+    try {
+        // creating the database if not exists
+        const dbName = process.env.DB_DATABASE;
+        
+        await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
+        console.log("Database created");
 
-connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`, (err) => {
-    if (err) throw err;
-    console.log("Database created");
-});
+        await connection.query(`USE ${dbName}`);
 
-connection.query(`USE ${dbName}`);
+        // SQL commands to create tables
+        const createUsersTable = `
+            CREATE TABLE IF NOT EXISTS Users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_name VARCHAR(255) NOT NULL,
+                first_name VARCHAR(255) NOT NULL,
+                last_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                is_writer BOOLEAN NOT NULL DEFAULT FALSE,
+                joined_date DATETIME NOT NULL DEFAULT NOW()
+            )
+        `;
 
-// creating the table if not exists
+        const createArticlesTable = `
+            CREATE TABLE IF NOT EXISTS Articles (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                writer_id INT,
+                title VARCHAR(255) NOT NULL,
+                FOREIGN KEY (writer_id) REFERENCES Users(id)
+            )
+        `;
 
+        const createCommentsTable = `
+            CREATE TABLE IF NOT EXISTS Comments (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT,
+                article_id INT,
+                text TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES Users(id),
+                FOREIGN KEY (article_id) REFERENCES Articles(id)
+            )
+        `;
 
-// SQL commands to create tables
-const createUsersTable = `
-    CREATE TABLE IF NOT EXISTS Users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_name VARCHAR(255) NOT NULL,
-        first_name VARCHAR(255) NOT NULL,
-        last_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        is_writer BOOLEAN NOT NULL,
-        joined_date DATE NOT NULL DEFAULT CURDATE()
-    )
-`;
+        const createLikesTable = `
+            CREATE TABLE IF NOT EXISTS Likes (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT,
+                article_id INT,
+                FOREIGN KEY (user_id) REFERENCES Users(id),
+                FOREIGN KEY (article_id) REFERENCES Articles(id)
+            )
+        `;
 
-const createArticlesTable = `
-    CREATE TABLE IF NOT EXISTS Articles (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        writer_id INT,
-        title VARCHAR(255) NOT NULL,
-        FOREIGN KEY (writer_id) REFERENCES Users(id)
-    )
-`;
+        // Execute the queries
+        await connection.query(createUsersTable);
+        console.log("Users table created");
 
-const createCommentsTable = `
-    CREATE TABLE IF NOT EXISTS Comments (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT,
-        article_id INT,
-        text TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES Users(id),
-        FOREIGN KEY (article_id) REFERENCES Articles(id)
-    )
-`;
+        await connection.query(createArticlesTable);
+        console.log("Articles table created");
 
-const createLikesTable = `
-    CREATE TABLE IF NOT EXISTS Likes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT,
-        article_id INT,
-        FOREIGN KEY (user_id) REFERENCES Users(id),
-        FOREIGN KEY (article_id) REFERENCES Articles(id)
-    )
-`;
+        await connection.query(createCommentsTable);
+        console.log("Comments table created");
 
-// Execute the queries
-connection.query(createUsersTable, (err) => {
-    if (err) throw err;
-    console.log("Users table created");
-});
+        await connection.query(createLikesTable);
+        console.log("Likes table created");
 
-connection.query(createArticlesTable, (err) => {
-    if (err) throw err;
-    console.log("Articles table created");
-});
+    } catch (err) {
+        console.error(err);
+    } finally {
+        // Close the connection
+        await connection.end();
+    }
+};
 
-connection.query(createCommentsTable, (err) => {
-    if (err) throw err;
-    console.log("Comments table created");
-});
-
-connection.query(createLikesTable, (err) => {
-    if (err) throw err;
-    console.log("Likes table created");
-});
-
-// Close the connection
-connection.end();
+createDatabaseAndTables();

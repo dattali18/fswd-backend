@@ -4,6 +4,7 @@ let cors = require('cors');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+const connectDB = require("./articles/connection");
 
 let apiRouter = express.Router();
 

@@ -11,45 +11,45 @@ const { postArticle, getArticleByTitle, getArticleById, updateArticle, getAllArt
 const router = express.Router();
 
 // GET - api/articles/:article_id/article
-router.get("/:article_id/article", (req, res) => {
-  const article_id = req.params.article_id;
-  const filename ="article" + article_id + ".md";
-  // the path to the file
-  // go up one level
-  const parentDir = path.join(__dirname, "..");
-  const filepath = path.join(parentDir, "articles", filename);
+// router.get("/:article_id/article", (req, res) => {
+//   const article_id = req.params.article_id;
+//   const filename ="article" + article_id + ".md";
+//   // the path to the file
+//   // go up one level
+//   const parentDir = path.join(__dirname, "..");
+//   const filepath = path.join(parentDir, "articles", filename);
 
-  fs.readFile(filepath, "utf8", (err, data) => {
-    if (err) {
-      return res.status(404).send("File not found");
-    }
-    const html = marked(data);
-    res.send(html);
-  });
-});
+//   fs.readFile(filepath, "utf8", (err, data) => {
+//     if (err) {
+//       return res.status(404).send("File not found");
+//     }
+//     const html = marked(data);
+//     res.send(html);
+//   });
+// });
 
-router.post("/", auth, async (req, res) => {
-  // we get the writer_id, title, and the content is a .md file the will be stored in the articles folder
-  // with the name article{article_id}.md
-    const { writer_id, title, content } = req.body;
+// router.post("/", auth, async (req, res) => {
+//   // we get the writer_id, title, and the content is a .md file the will be stored in the articles folder
+//   // with the name article{article_id}.md
+//     const { writer_id, title, content } = req.body;
 
-    const [response] = await postArticle({ writer_id, title });
+//     const [response] = await postArticle({ writer_id, title });
 
-    const article_id = response.insertId;
+//     const article_id = response.insertId;
 
-    const filename = "article" + article_id + ".md";
+//     const filename = "article" + article_id + ".md";
 
-    const parentDir = path.join(__dirname, "..");
-    const filepath = path.join(parentDir, "articles", filename);
+//     const parentDir = path.join(__dirname, "..");
+//     const filepath = path.join(parentDir, "articles", filename);
 
-    fs.writeFile(filepath, content, (err) => {
-      if (err) {
-        return res.status(500).send("Error writing file");
-      }
+//     fs.writeFile(filepath, content, (err) => {
+//       if (err) {
+//         return res.status(500).send("Error writing file");
+//       }
 
-      res.send("Article created successfully");
-    });
-});
+//       res.send("Article created successfully");
+//     });
+// });
 
 // GET - api/articles?title=article_title
 router.get("/", async (req, res) => {
@@ -141,4 +141,54 @@ router.put("/:article_id", auth, async (req, res) => {
 });
 
 
+// routes/articles.js
+const Article = require('../models/articlesModel');
+
+// @route    POST api/articles
+// @desc     Create an article
+// @access   Private
+router.post('/', async (req, res) => {
+  const { writer_id, title, content, tags } = req.body;
+  try {
+    const newArticle = new Article({
+      writer: req.user.id,
+      title,
+      content,
+      tags
+    });
+
+    const article = await newArticle.save();
+
+    // saving the new article to the database
+    const [response] = postArticle({ writer_id, title });
+
+    // check if the article was saved
+    if (response.affectedRows > 0) {
+      res.json(article);
+    } else {
+      res.status(500).send("Internal server error");
+    }
+
+    res.json(article);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route    GET api/articles
+// @desc     Get all articles
+// @access   Public
+// router.get('/', async (req, res) => {
+//   try {
+//     const articles = await Article.find().populate('writer', ['user_name']);
+//     res.json(articles);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send('Server Error');
+//   }
+// });
+
 module.exports = router;
+
+

@@ -3,7 +3,7 @@
 // Database connection
 const connection = require("../database/connection");
 
-async function allUsers() {
+async function getUsers() {
   const [rows] = await connection.execute(`SELECT * FROM Users`);
   return rows;
 }
@@ -60,5 +60,5 @@ module.exports = {
   getUserByEmail,
   updateUser,
   deleteUser,
-  allUsers,
+  getUsers,
 };

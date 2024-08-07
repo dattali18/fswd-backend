@@ -15,6 +15,10 @@
     * `@param` `first_name` - the first name of the user
     * `@param` `last_name` - the last name of the user
     * `@return` - the user object
+4. `DELETE - api/users/:id`
+    * `@desc` - Delete a user by id
+    * `@param` `id` - the id of the user
+    * `@return` - the user object
 
 ## Auth
 

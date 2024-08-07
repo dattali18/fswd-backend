@@ -3,9 +3,40 @@ const { auth } = require("./auth");
 
 let router = express.Router();
 
-let { updateUser, getUserById } = require("../models/userModel.js");
+// Import the user model
+let { updateUser, getUserById, deleteUser, getUsers } = require("../models/userModel.js");
 
-router.get("/:id",  async function (req, res, next) {
+// Import the auth middleware
+const { auth } = require("../utils/authMiddleware");
+
+/**
+ * @desc Get all users
+ * @route GET /users
+ * @access Private
+ */
+router.get("/", async function (req, res) {
+  try {
+    const rows = await getUsers();
+    res.send({
+      status: 200,
+      message: "Users found",
+      data: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "An error occurred while getting the users." });
+  }
+});
+
+/**
+ * @desc Get a user by id
+ * @route GET /users/:id
+ * @access Private
+ * @param {string} id - The id of the user
+ */
+router.get("/:id", async function (req, res) {
   const id = req.params.id;
 
   try {
@@ -15,7 +46,6 @@ router.get("/:id",  async function (req, res, next) {
       message: `User ${id} found`,
       data: rows,
     });
-  
   } catch (error) {
     console.error(error);
     res
@@ -24,8 +54,13 @@ router.get("/:id",  async function (req, res, next) {
   }
 });
 
-/* GET users listing. */
-router.put("/:id", async function (req, res, next) {
+/**
+ * @desc Update a user
+ * @route PUT /users/:id
+ * @access Private
+ * @param {string} id - The id of the user
+ */
+router.put("/:id", auth, async function (req, res, next) {
   const id = req.params.id;
   const user = req.body;
 
@@ -50,25 +85,27 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
-router.get("/:id", async function (req, res, next) {
+/**
+ * @desc Delete a user by id
+ * @route DELETE /users/:id
+ * @access Admin
+ * @param {string} id - The id of the user
+ */
+router.delete("/:id", auth, async function (req, res) {
   const id = req.params.id;
 
-  console.log(`Getting user ${id}`);
-
-  const rows = await getUserById(id);
-
-  // if the user was not found
-  if (rows.length === 0) {
-    res.send({
-      status: 404,
-      message: `User ${id} not found`,
-    });
-  } else {
+  try {
+    const response = await deleteUser(id);
     res.send({
       status: 200,
-      message: `User ${id} found`,
-      data: rows,
+      message: `User ${id} deleted`,
+      data: response,
     });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "An error occurred while deleting the user." });
   }
 });
 

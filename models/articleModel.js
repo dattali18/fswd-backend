@@ -1,9 +1,9 @@
 const connection = require("../database/connection");
 
-async function getBestArticles(time_period="week", limit=5) {
+async function getBestArticles(time_period = "week", limit = 5) {
     let days = 7;
 
-    switch(time_period) {
+    switch (time_period) {
         case "week":
             days = 7;
             break;
@@ -44,14 +44,14 @@ async function getAllArticles(article) {
 }
 
 async function postArticle(article) {
-  const { writer_id, title } = article;
+    const { writer_id, title } = article;
 
-  const rows = await connection.execute(
-    `INSERT INTO Articles (writer_id, title) VALUES (?, ?)`,
-    [writer_id, title]
-  );
+    const rows = await connection.execute(
+        `INSERT INTO Articles (writer_id, title) VALUES (?, ?)`,
+        [writer_id, title]
+    );
 
-  return rows;
+    return rows;
 }
 
 async function getArticleByTitle(title) {
@@ -64,8 +64,16 @@ async function getArticleByTitle(title) {
     return rows;
 }
 
-async function getArticleById(article_id)
-{
+async function getArticlesByUserId(user_id) {
+    const [rows] = await connection.execute(
+        `SELECT * FROM Articles WHERE writer_id = ?`,
+        [user_id]
+    );
+
+    return rows;
+}
+
+async function getArticleById(article_id) {
     const [rows] = await connection.execute(
         `SELECT * FROM Articles WHERE id = ?`,
         [article_id]
@@ -75,7 +83,6 @@ async function getArticleById(article_id)
 }
 
 async function updateArticle(article_id, title) {
-
     const [rows] = await connection.execute(
         `UPDATE Articles SET title = ? WHERE id = ?`,
         [title, article_id]
@@ -88,8 +95,8 @@ module.exports = {
     getBestArticles,
     postArticle,
     getArticleByTitle,
+    getArticlesByUserId,
     getArticleById,
     getAllArticles,
     updateArticle,
-
 }

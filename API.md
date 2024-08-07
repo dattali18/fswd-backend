@@ -16,7 +16,7 @@
 1. `GET - api/articles/:id/article` - Get an article by id, return an `HTML` page
 2. `GET - api/articles/:id` - Get an article by id (database object include title etc.)
 3. `POST - api/articles/` - Add an article (`title`, `content`, `writer_id`)
-4. `GET - api/articles/?title=<title>&page=<page>&per_page=<per_page>` - return an article with title like <title>
+4. `GET - api/articles/?title=<title>&page=<page>&per_page=<per_page>` - return an article with title like `<title>`
 5. `PUT - api/articles/:id/article` - update the file
 6. `PUT - api/articles/:id` - update the database object
 

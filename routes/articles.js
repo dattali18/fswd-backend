@@ -2,7 +2,7 @@ const express = require("express");
 
 const fs = require("fs");
 const path = require("path");
-const { marked } = require("marked");
+// const { marked } = require("marked");
 
 const auth = require("../utils/authMiddleware")
 
@@ -51,7 +51,11 @@ const router = express.Router();
 //     });
 // });
 
-// GET - api/articles?title=article_title
+/**
+ * @route GET api/articles
+ * @param title - the title of the article to search for if no title is given return all articles
+ * @desc Get the article with the title = title
+ * */
 router.get("/", async (req, res) => {
   const title = req.query.title;
 
@@ -69,6 +73,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// FIXME: fix the route
 // GET - api/articles/best?time_period=day
 router.get("/best", async (req, res) => {
     const time_period = req.query.time_period;
@@ -85,6 +90,7 @@ router.get("/best", async (req, res) => {
 });
 
 // GET - api/articles/:article_id
+
 router.get("/:article_id", async (req, res) => {
   const article_id = req.params.article_id;
   // get the article object from the database
@@ -101,6 +107,7 @@ router.get("/:article_id", async (req, res) => {
 
 });
 
+// TODO: remove this function and replace with MongoDB
 // for editing the article
 // PUT - api/articles/:article_id/article
 router.put("/:article_id/article", auth, async (req, res) => {
@@ -121,7 +128,7 @@ router.put("/:article_id/article", auth, async (req, res) => {
   });
 });
 
-// for editing the article object in the database
+// for editing the article object in the MySQL database
 // PUT - api/articles/:article_id
 router.put("/:article_id", auth, async (req, res) => {
     const article_id = req.params.article_id;
@@ -144,9 +151,10 @@ router.put("/:article_id", auth, async (req, res) => {
 // routes/articles.js
 const Article = require('../models/articlesModel');
 
-// @route    POST api/articles
-// @desc     Create an article
-// @access   Private
+/**
+* @route    POST api/articles
+* @desc     Create an article and store it in the databases (MySQL and MongoDB)
+*/
 router.post('/', async (req, res) => {
   const { writer_id, title, content, tags } = req.body;
   try {
@@ -162,9 +170,6 @@ router.post('/', async (req, res) => {
 
     const article = await newArticle.save();
 
-    // saving the new article to the database
-
-
     // check if the article was saved
     if (response.affectedRows > 0) {
       res.json(article);
@@ -179,9 +184,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @route GET api/articles/:id
-// @desc Get the article with id_ = id
-// @access Public
+/**
+  *  @route GET api/articles/:id
+  *  @desc Get the article with id_ = id
+*/
 router.get('/:id', async  (req, res) => {
     console.log("hi")
     try {
@@ -199,10 +205,11 @@ router.get('/:id', async  (req, res) => {
     }
 })
 
-// @route    GET api/articles
-// @desc     Get all articles
-// @access   Public
-router.get('/all', async (req, res) => {
+/**
+ * @route    GET api/articles
+ * @desc     Get all articles
+ * */
+router.get('/', async (req, res) => {
   try {
     const articles = await Article.find().exec();
     res.json(articles);

@@ -4,7 +4,13 @@ let cors = require('cors');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+
+// MARK: connect to the database (MongoDB)
 const connectDB = require("./articles/connection");
+
+connectDB();
+
+// MARK: Router
 
 let apiRouter = express.Router();
 

@@ -150,8 +150,11 @@ const Article = require('../models/articlesModel');
 router.post('/', async (req, res) => {
   const { writer_id, title, content, tags } = req.body;
   try {
+      const [response] = await postArticle({ writer_id, title });
+
     const newArticle = new Article({
-      writer: req.user.id,
+      db_id:  response.insertId,
+      writer_id,
       title,
       content,
       tags
@@ -160,34 +163,54 @@ router.post('/', async (req, res) => {
     const article = await newArticle.save();
 
     // saving the new article to the database
-    const [response] = postArticle({ writer_id, title });
+
 
     // check if the article was saved
     if (response.affectedRows > 0) {
       res.json(article);
     } else {
-      res.status(500).send("Internal server error");
+      return res.status(500).send("Internal server error");
     }
 
-    res.json(article);
+    // res.json(article);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send('Server Error');
+  }
+});
+
+// @route GET api/articles/:id
+// @desc Get the article with id_ = id
+// @access Public
+router.get('/:id', async  (req, res) => {
+    console.log("hi")
+    try {
+        const article = await Article.findById(req.params.id).populate('writer', ['user_name']);
+        if (!article) {
+        return res.status(404).json({ msg: 'Article not found' });
+        }
+        res.json(article);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+        return res.status(404).json({ msg: 'Article not found' });
+        }
+        res.status(500).send('Server Error');
+    }
+})
+
+// @route    GET api/articles
+// @desc     Get all articles
+// @access   Public
+router.get('/all', async (req, res) => {
+  try {
+    const articles = await Article.find().exec();
+    res.json(articles);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
-
-// @route    GET api/articles
-// @desc     Get all articles
-// @access   Public
-// router.get('/', async (req, res) => {
-//   try {
-//     const articles = await Article.find().populate('writer', ['user_name']);
-//     res.json(articles);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send('Server Error');
-//   }
-// });
 
 module.exports = router;
 

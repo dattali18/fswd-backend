@@ -2,9 +2,12 @@
 const mongoose = require("mongoose");
 
 const ArticleSchema = new mongoose.Schema({
-  writer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+  db_id: {
+    type: String,
+    required: true,
+  },
+  writer_id: {
+    type: String,
     required: true,
   },
   title: {

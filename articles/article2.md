@@ -1,1 +1,0 @@
-# Sample Article 2

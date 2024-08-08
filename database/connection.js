@@ -1,8 +1,11 @@
-require("dotenv").config();
+// require("dotenv").config();
 
-const mysql= require("mysql2/promise");
+import dotenv from "dotenv";
+dotenv.config();
 
-const connection = mysql.createPool({
+import { createPool } from "mysql2/promise";
+
+const connection = createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -16,4 +19,4 @@ const connection = mysql.createPool({
 //     }
 // )
 
-module.exports = connection;
+export default connection;

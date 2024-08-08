@@ -1,33 +1,38 @@
-const express = require("express");
+import { Router } from "express";
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import bcryptjs_pkg from "bcryptjs";
+const { hash, compare } = bcryptjs_pkg;
 
-const router = express.Router();
-const auth = require("../utils/authMiddleware.js");
+import jsonwebtoken_pgk from "jsonwebtoken";
+const { sign } = jsonwebtoken_pgk;
 
-const { getUserByEmail, createUser } = require("../models/userModel.js"); // Assuming you have a User model
+const router = Router();
+// import auth from "../utils/authMiddleware.js";
 
-require("dotenv").config();
+import { getUserByEmail, createUser } from "../models/userModel.js";
+
+// require("dotenv").config();
+
+import dotenv from "dotenv";
+dotenv.config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
-// router.post("/", auth, async (req, res) => {
-//   // get the user with the id from the parameters of the request
-//   const { id } = req.params.userId;
-//   const [user] = await getUserById(id);
-//
-//   // return the user
-//   res.json(user);
-// });
-
+/**
+ * @desc Register a new user
+ * @route POST /api/auth/register
+ * @access Public
+ * @param email
+ * @param password
+ * @returns {string} - User created
+ */
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   console.log(email, password);
 
   // the rest of the data will be added later
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hash(password, 10);
   const newUser = {
     user_name: "",
     first_name: "",
@@ -45,7 +50,14 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Login Route
+/** 
+ * @desc Login a user
+ * @route POST /api/auth/login
+ * @access Public
+ * @param email
+ * @param password
+ * @returns {string} - Token and user information
+ */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -61,13 +73,13 @@ router.post("/login", async (req, res) => {
       return res.status(404).send("Invalid email or password");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).send("Invalid email or password");
     }
 
-    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: "1h" });
+    const token = sign({ id: user.id }, SECRET_KEY, { expiresIn: "1h" });
     res.json({
       token,
       user: {
@@ -82,4 +94,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

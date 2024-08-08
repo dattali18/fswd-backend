@@ -1,7 +1,7 @@
-let connection = require('../connection');
+import { query } from '../connection';
 
 function selectUser() {
-    connection.query('SELECT * FROM Users', function (error, results, fields) {
+    query('SELECT * FROM Users', function (error, results, fields) {
         if (error) throw error;
         console.log('The solution is: ', results);
     });

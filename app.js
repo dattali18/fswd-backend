@@ -1,17 +1,23 @@
-let createError = require('http-errors');
-let express = require('express');
-let cors = require('cors');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+import createError from 'http-errors';
+import express, { Router, json, urlencoded } from 'express';
+import cors from 'cors';
+import { join } from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-let apiRouter = express.Router();
+// MARK: connect to the database (MongoDB)
+import connectDB from "./articles/connection.js";
 
-let usersRouter = require('./routes/users');
-let authRouter = require('./routes/auth');
-let articlesRouter = require('./routes/articles');
-let commentsRouter = require('./routes/comments');
-let likesRouter = require('./routes/likes');
+connectDB();
+
+// MARK: Router
+
+let apiRouter = Router();
+
+import usersRouter from './routes/users.js';
+import authRouter from './routes/auth.js';
+import articlesRouter from './routes/articles.js';
+import likesRouter from './routes/likes.js';
 
 let app = express();
 
@@ -22,14 +28,14 @@ let corsOptions = {
 app.use(cors(corsOptions));
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// app.set('views', join(__dirname, 'views'));
+// app.set('view engine', 'pug');
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(logger('dev'));
+// app.use(json());
+// app.use(urlencoded({ extended: false }));
+// app.use(cookieParser());
+// app.use(static(join(__dirname, 'public')));
 
 apiRouter.use('/users', usersRouter);
 apiRouter.use("/auth", authRouter);
@@ -56,4 +62,4 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-module.exports = app;
+export default app;

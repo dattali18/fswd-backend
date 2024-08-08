@@ -1,9 +1,12 @@
 // this file will be used to create the database and the tables
 
 // importing connection from connection.js
-require("dotenv").config();
+// require("dotenv").config();
 
-const connection = require("../connection");
+import dotenv from "dotenv";
+dotenv.config();
+
+import connection from "../connection.js";
 
 const createDatabaseAndTables = async () => {
     try {

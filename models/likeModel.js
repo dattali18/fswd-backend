@@ -1,4 +1,4 @@
-const connection = require('../database/connection');
+import connection from '../database/connection.js';
 
 // Get all likes
 async function allLikes(articleId) {
@@ -83,7 +83,7 @@ async function getLikeCountAll(userId) {
   return rows;
 }
 
-module.exports = {
+export {
   getLikeCountAll,
   getUserLikeCount,
   getLikeCount,

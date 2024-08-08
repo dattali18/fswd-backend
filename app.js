@@ -18,6 +18,7 @@ import usersRouter from './routes/users.js';
 import authRouter from './routes/auth.js';
 import articlesRouter from './routes/articles.js';
 import likesRouter from './routes/likes.js';
+import commentsRouter from './routes/comments.js';
 
 let app = express();
 

@@ -1,4 +1,4 @@
-const connection = require("../database/connection");
+import connection from "../database/connection.js";
 
 async function getCommentsByUserId(user_id) {
     const [rows] = await connection.execute(
@@ -9,6 +9,6 @@ async function getCommentsByUserId(user_id) {
     return rows;
 }
 
-module.exports = {
+export {
     getCommentsByUserId
 }

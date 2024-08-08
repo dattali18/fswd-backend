@@ -1,14 +1,8 @@
-const express = require("express");
+import { Router } from "express";
 
-// const fs = require("fs");
-// const path = require("path");
-// const { marked } = require("marked");
+import { getCommentsByUserId } from "../models/commentModel.js";
 
-const auth = require("../utils/authMiddleware")
-
-const { getCommentsByUserId } = require("../models/commentModel");
-
-const router = express.Router();
+const router = Router();
 
 // GET - api/comments?user_id=user_id's_comments
 router.get("/", async (req, res) => {
@@ -22,4 +16,4 @@ router.get("/", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,13 +1,17 @@
-const express = require("express");
-const { auth } = require("./auth");
+import { Router } from "express";
 
-let router = express.Router();
+let router = Router();
 
 // Import the user model
-let { updateUser, getUserById, deleteUser, getUsers } = require("../models/userModel.js");
+import {
+  deleteUser,
+  getUserById,
+  getUsers,
+  updateUser,
+} from "../models/userModel.js";
 
 // Import the auth middleware
-const { auth } = require("../utils/authMiddleware");
+import auth from "../utils/authMiddleware.js";
 
 /**
  * @desc Get all users
@@ -109,4 +113,4 @@ router.delete("/:id", auth, async function (req, res) {
   }
 });
 
-module.exports = router;
+export default router;

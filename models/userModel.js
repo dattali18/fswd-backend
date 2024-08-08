@@ -1,7 +1,5 @@
-// require("dotenv").config();
-
 // Database connection
-const connection = require("../database/connection");
+import connection from "../database/connection.js";
 
 async function getUsers() {
   const [rows] = await connection.execute(`SELECT * FROM Users`);
@@ -10,10 +8,9 @@ async function getUsers() {
 
 // Get user by id
 async function getUserById(id) {
-  const [rows] = await connection.execute(
-    `SELECT * FROM Users WHERE id = ?`,
-    [id]
-  );
+  const [rows] = await connection.execute(`SELECT * FROM Users WHERE id = ?`, [
+    id,
+  ]);
   return rows;
 }
 
@@ -54,7 +51,7 @@ async function deleteUser(id) {
   return rows;
 }
 
-module.exports = {
+export {
   createUser,
   getUserById,
   getUserByEmail,

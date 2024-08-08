@@ -1,7 +1,7 @@
 // models/Article.js
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const ArticleSchema = new mongoose.Schema({
+const ArticleSchema = new Schema({
   db_id: {
     type: String,
     required: true,
@@ -25,4 +25,4 @@ const ArticleSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Article", ArticleSchema);
+export default model("Article", ArticleSchema);

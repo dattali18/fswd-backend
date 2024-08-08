@@ -35,7 +35,7 @@
 
 ## Articles
 
-1. `GET - api/articles/:id/article`
+1. `GET - api/articles/:id/content`
     * `@desc` - Get an article by id, return an `Markdown` file.
     * `@param-url` `id` - the id of the article
     * `@return` - the article file
@@ -55,7 +55,7 @@
     * `@param-query` `page` - the page number
     * `@param-query` `per_page` - the number of articles per page
     * `@return` - an array of article objects
-5. `PUT - api/articles/:id/article`
+5. `PUT - api/articles/:id/content`
     * `@desc` - Update the article file
     * `@param-url` `id` - the id of the article
     * `@param-body` `content`

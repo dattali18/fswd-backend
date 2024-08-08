@@ -1,171 +1,83 @@
-const express = require("express");
+import { Router } from "express";
 
-const fs = require("fs");
-const path = require("path");
-// const { marked } = require("marked");
+import Article from "../models/articlesModel.js";
 
-const auth = require("../utils/authMiddleware")
+import auth from "../utils/authMiddleware.js";
 
-const { postArticle, getArticleByTitle, getArticleById, updateArticle, getAllArticles, getBestArticles } = require("../models/articleModel");
+import {
+  getAllArticles,
+  getArticleById,
+  getArticleByTitle,
+  postArticle,
+  updateArticle,
+} from "../models/articleModel.js";
 
-const router = express.Router();
-
-// GET - api/articles/:article_id/article
-// router.get("/:article_id/article", (req, res) => {
-//   const article_id = req.params.article_id;
-//   const filename ="article" + article_id + ".md";
-//   // the path to the file
-//   // go up one level
-//   const parentDir = path.join(__dirname, "..");
-//   const filepath = path.join(parentDir, "articles", filename);
-
-//   fs.readFile(filepath, "utf8", (err, data) => {
-//     if (err) {
-//       return res.status(404).send("File not found");
-//     }
-//     const html = marked(data);
-//     res.send(html);
-//   });
-// });
-
-// router.post("/", auth, async (req, res) => {
-//   // we get the writer_id, title, and the content is a .md file the will be stored in the articles folder
-//   // with the name article{article_id}.md
-//     const { writer_id, title, content } = req.body;
-
-//     const [response] = await postArticle({ writer_id, title });
-
-//     const article_id = response.insertId;
-
-//     const filename = "article" + article_id + ".md";
-
-//     const parentDir = path.join(__dirname, "..");
-//     const filepath = path.join(parentDir, "articles", filename);
-
-//     fs.writeFile(filepath, content, (err) => {
-//       if (err) {
-//         return res.status(500).send("Error writing file");
-//       }
-
-//       res.send("Article created successfully");
-//     });
-// });
+const router = Router();
 
 /**
- * @route GET api/articles
- * @param title - the title of the article to search for if no title is given return all articles
- * @desc Get the article with the title = title
- * */
-router.get("/", async (req, res) => {
-  const title = req.query.title;
+ * @desc Get the content of the article (in .md format)
+ * @route GET /api/articles/:article_id/content
+ * @access Public
+ * @param article_id
+ */
+router.get("/:article_id/content", async (req, res) => {
+  const article_id = req.params.article_id;
 
-  if(!title) {
-      const articles = await getAllArticles();
-      return res.send(articles)
-  }
-
-  const [article] = await getArticleByTitle(title);
-
-  if (article) {
-    return res.send(article);
-  } else {
-    return res.status(404).send("Article not found");
-  }
-});
-
-// FIXME: fix the route
-// GET - api/articles/best?time_period=day
-router.get("/best", async (req, res) => {
-    const time_period = req.query.time_period;
-    const limit = req.query.limit;
-
-    // if there is no time_period give the best from last week
-    try {
-        const articles = await getBestArticles(time_period || "week", limit || 5);
-        return res.send(articles);
-    } catch (error) {
-        // console.log(error)
-        return res.status(500).send("Error getting best articles");
+  // get the article object from the mongoDB database
+  try {
+    const article = await findById(article_id);
+    if (article) {
+      res.send(article.content);
+    } else {
+      res.status(404).send("Article not found");
     }
+  } catch (error) {
+    res.status(500).send("Error getting article");
+  }
 });
 
-// GET - api/articles/:article_id
-
+/**
+ * @desc Get the article object
+ * @route GET /api/articles/:article_id
+ * @access Public
+ * @param article_id
+ */
 router.get("/:article_id", async (req, res) => {
+  // get the article object form the MySQL database
   const article_id = req.params.article_id;
-  // get the article object from the database
-    try {
-        const [article] = await getArticleById(article_id);
-        if (article) {
-            res.send(article);
-        } else {
-            res.status(404).send("Article not found");
-        }
-    } catch (error) {
-        res.status(500).send("Error getting article");
+
+  try {
+    const [article] = await getArticleById(article_id);
+    if (article) {
+      res.send(article);
+    } else {
+      res.status(404).send("Article not found");
     }
-
+  } catch (error) {
+    res.status(500).send("Error getting article");
+  }
 });
-
-// TODO: remove this function and replace with MongoDB
-// for editing the article
-// PUT - api/articles/:article_id/article
-router.put("/:article_id/article", auth, async (req, res) => {
-  const article_id = req.params.article_id;
-  const { content } = req.body;
-
-  const filename = "article" + article_id + ".md";
-
-  const parentDir = path.join(__dirname, "..");
-  const filepath = path.join(parentDir, "articles", filename);
-
-  fs.writeFile(filepath, content, (err) => {
-    if (err) {
-      return res.status(500).send("Error writing file");
-    }
-
-    res.send("Article updated successfully");
-  });
-});
-
-// for editing the article object in the MySQL database
-// PUT - api/articles/:article_id
-router.put("/:article_id", auth, async (req, res) => {
-    const article_id = req.params.article_id;
-    const { title } = req.body;
-
-    try {
-        const [response] = await updateArticle(article_id, title);
-
-        if (response.affectedRows > 0) {
-            res.send("Article updated successfully");
-        } else {
-            res.status(404).send("Article not found");
-        }
-    } catch (error) {
-        res.status(500).send("Error updating article");
-    }
-});
-
-
-// routes/articles.js
-const Article = require('../models/articlesModel');
 
 /**
-* @route    POST api/articles
-* @desc     Create an article and store it in the databases (MySQL and MongoDB)
-*/
-router.post('/', async (req, res) => {
+ * @desc     Create an article and store it in the databases (MySQL and MongoDB)
+ * @route    POST api/articles
+ * @access   Private
+ * @param writer_id
+ * @param title
+ * @param content
+ * @param tags
+ */
+router.post("/", async (req, res) => {
   const { writer_id, title, content, tags } = req.body;
   try {
-      const [response] = await postArticle({ writer_id, title });
+    const [response] = await postArticle({ writer_id, title });
 
     const newArticle = new Article({
-      db_id:  response.insertId,
+      db_id: response.insertId,
       writer_id,
       title,
       content,
-      tags
+      tags,
     });
 
     const article = await newArticle.save();
@@ -180,45 +92,124 @@ router.post('/', async (req, res) => {
     // res.json(article);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).send('Server Error');
+    return res.status(500).send("Server Error");
   }
 });
 
 /**
-  *  @route GET api/articles/:id
-  *  @desc Get the article with id_ = id
-*/
-router.get('/:id', async  (req, res) => {
-    console.log("hi")
-    try {
-        const article = await Article.findById(req.params.id).populate('writer', ['user_name']);
-        if (!article) {
-        return res.status(404).json({ msg: 'Article not found' });
-        }
-        res.json(article);
-    } catch (err) {
-        console.error(err.message);
-        if (err.kind === 'ObjectId') {
-        return res.status(404).json({ msg: 'Article not found' });
-        }
-        res.status(500).send('Server Error');
+ * @route GET api/articles
+ * @param title - the title of the article to search for if no title is given return all articles
+ * @param page - the page number to get the articles from
+ * @param limit - the number of articles to get
+ * @desc Get the article with the title = title
+ * */
+router.get("/", async (req, res) => {
+  const title = req.query.title;
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
+  if (!title) {
+    const articles = await getAllArticles(page, limit);
+    return res.send(articles);
+  }
+
+  const [article] = await getArticleByTitle(title);
+
+  if (article) {
+    return res.send(article);
+  } else {
+    return res.status(404).send("Article not found");
+  }
+});
+
+// // FIXME: fix the route
+// // GET - api/articles/best?time_period=day
+// router.get("/best", async (req, res) => {
+//   const time_period = req.query.time_period;
+//   const limit = req.query.limit;
+
+//   // if there is no time_period give the best from last week
+//   try {
+//     const articles = await getBestArticles(time_period || "week", limit || 5);
+//     return res.send(articles);
+//   } catch (error) {
+//     // console.log(error)
+//     return res.status(500).send("Error getting best articles");
+//   }
+// });
+
+/**
+ * @desc Update the content of the article
+ * @route PUT /api/articles/:article_id/content
+ * @access Private
+ */
+router.put("/:article_id/content", auth, async (req, res) => {
+  // update the content of the article in the MongoDB database
+  const article_id = req.params.article_id;
+  const { content } = req.body;
+
+  try {
+    const article = await findByIdAndUpdate(
+      article_id,
+      { content },
+      { new: true }
+    );
+
+    if (article) {
+      res.send(article);
     }
-})
+
+    res.status(404).send("Article not found");
+  } catch (error) {
+    res.status(500).send("Error updating article");
+  }
+});
+
+/**
+ * @desc Update the article object
+ * @route PUT /api/articles/:article_id
+ * @access Private
+ * @param article_id
+ */
+router.put("/:article_id", auth, async (req, res) => {
+  const article_id = req.params.article_id;
+  // update both MondoDB and MySQL
+  const { title } = req.body;
+
+  try {
+    const [response] = await updateArticle(article_id, title);
+
+    // update the MongoDB database
+    const article = await findByIdAndUpdate(
+      article_id,
+      { title },
+      { new: true }
+    );
+
+    // check if the article was updated in both databases
+    if (response.affectedRows > 0 && article) {
+      res.json(article);
+    } else {
+      return res.status(500).send("Internal server error");
+    }
+  } catch (error) {
+    res.status(500).send("Error updating article");
+  }
+});
 
 /**
  * @route    GET api/articles
  * @desc     Get all articles
  * */
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const articles = await Article.find().exec();
+    const articles = await find().exec();
     res.json(articles);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
-module.exports = router;
-
-
+export default router;

@@ -1,14 +1,8 @@
-const express = require("express");
+import { Router } from "express";
 
-const {
-  createLike,
-  deleteLike,
-  getLikeCountAll,
-  getUserLikeCount,
-  getLikeCount,
-} = require("../models/likeModel");
+import { createLike, deleteLike, getLikeCountAll, getUserLikeCount, getLikeCount } from "../models/likeModel.js";
 
-const router = express.Router();
+const router = Router();
 
 /**
  * @desc Like an article
@@ -122,4 +116,4 @@ router.get("/count", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -10,6 +10,7 @@ import {
   getArticleByTitle,
   postArticle,
   updateArticle,
+    getPaginatedArticles,
 } from "../models/articleModel.js";
 
 const router = Router();
@@ -25,9 +26,9 @@ router.get("/:article_id/content", async (req, res) => {
 
   // get the article object from the mongoDB database
   try {
-    const article = await findById(article_id);
+    const article = await Article.find({ db_id: article_id });
     if (article) {
-      res.send(article.content);
+      res.send(article);
     } else {
       res.status(404).send("Article not found");
     }
@@ -110,7 +111,7 @@ router.get("/", async (req, res) => {
   const limit = parseInt(req.query.limit) || 5;
 
   if (!title) {
-    const articles = await getAllArticles(page, limit);
+    const articles = await getPaginatedArticles(page, limit);
     return res.send(articles);
   }
 

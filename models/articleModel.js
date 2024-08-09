@@ -35,10 +35,50 @@ async function getBestArticles(time_period = "week", limit = 5) {
   return rows;
 }
 
-async function getAllArticles(page, limit) {
+// Create a function to get paginated articles
+async function getPaginatedArticles(page, limit) {
+    const limitInt = parseInt(limit, 10);
+    const pageInt = parseInt(page, 0);
+
+    // Calculate the offset
+    const offset = (pageInt - 1) * limitInt;
+
+    try {
+        // Query to get articles with pagination
+        const [rows] = await connection.execute(
+            'SELECT * FROM Articles',
+        );
+
+        const paginatedRows = rows.slice(offset, offset + limitInt);
+
+        // Query to get the total number of articles (for pagination info)
+        const [countRows] = await connection.execute(
+            'SELECT COUNT(*) as total FROM Articles'
+        );
+
+        const totalArticles = countRows[0].total;
+        const totalPages = Math.ceil(totalArticles / limit);
+
+        return {
+            data: paginatedRows,
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalArticles: totalArticles
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching paginated articles:', error);
+        throw new Error('Could not fetch paginated articles');
+    }
+};
+
+
+async function getAllArticles(page= 0, limit= 5) {
+    console.log(page, limit);
   // add pagination
   const offset = (page - 1) * limit;
-  const [rows] = await connection.execute(`SELECT * FROM Articles LIMIT ?, ?`, [
+  const [rows] = await connection.execute(`SELECT * FROM Articles LIMIT ? OFFSET ?`, [
     offset,
     limit,
   ]);
@@ -101,4 +141,5 @@ export {
   getArticleById,
   getAllArticles,
   updateArticle,
+    getPaginatedArticles,
 };

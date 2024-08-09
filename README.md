@@ -24,17 +24,19 @@ DB_NAME=DATABASE_NAME
 This is the Schema for the `MongoDB` database
 
 ```json
-"Articles": [
-    {
-        "_id": "ObjectId",
-        "db_id": "String",
-        "title": "String",
-        "content": "String",
-        "writer_id": "String",
-        "tags": "Array",
-        "date": "Date",
-    }
-]
+{
+    "Articles": [
+        {
+            "_id": "ObjectId",
+            "db_id": "String",
+            "title": "String",
+            "content": "String",
+            "writer_id": "String",
+            "tags": "Array",
+            "date": "Date",
+        }
+    ]
+}
 ```
 
 To use the `MongoDB` db you need to add a `.env` file with the following content:

@@ -11,7 +11,7 @@
     * `@return` - an array of user objects
 3. `PUT - api/users/`
     * `@desc` - Add information to a user
-    * `@param` `user_name` - the user name of the user
+    * `@param` `user_name` - the username of the user
     * `@param` `first_name` - the first name of the user
     * `@param` `last_name` - the last name of the user
     * `@return` - the user object

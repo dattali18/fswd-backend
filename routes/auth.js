@@ -29,7 +29,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email, password);
+  // console.log(email, password);
 
   // the rest of the data will be added later
   const hashedPassword = await hash(password, 10);

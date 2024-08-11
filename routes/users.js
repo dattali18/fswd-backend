@@ -64,7 +64,7 @@ router.get("/:id", async function (req, res) {
  * @access Private
  * @param {string} id - The id of the user
  */
-router.put("/:id", auth, async function (req, res, next) {
+router.put("/:id", async function (req, res, next) {
   const id = req.params.id;
   const user = req.body;
 

@@ -12,9 +12,33 @@ import {
   postArticle,
   updateArticle,
   getPaginatedArticles,
+  getBestArticles,
 } from "../models/articleModel.js";
 
 const router = Router();
+
+/**
+ * @desc Get the best articles within a specified time period
+ * @route GET api/articles/best
+ * @access Public
+ * @param time_period - the time period to filter best articles (e.g., 'week', 'month')
+ */
+router.get("/best", async (req, res) => {
+  const time_period = req.query.time_period || "week"; // default to "week" if no time_period is specified
+
+  try {
+    const articles = await getBestArticles(time_period);
+
+    if (articles.length > 0) {
+      res.json(articles);
+    } else {
+      res.status(404).send("No articles found for the specified time period");
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Error fetching best articles");
+  }
+});
 
 /**
  * @desc Get the content of the article (in .md format)
@@ -110,14 +134,14 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   const user = req.query.user;
 
-  if(user) {
+  if (user) {
     const articles = await getAllUserArticles(user);
     return res.send(articles);
   }
 
   const title = req.query.title;
 
-  if(title) {
+  if (title) {
     const [article] = await getArticleByTitle(title);
     if (article) {
       return res.send(article);
@@ -126,18 +150,18 @@ router.get("/", async (req, res) => {
     }
   }
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
 
 
-    const articles = await getPaginatedArticles(page, limit);
+  const articles = await getPaginatedArticles(page, limit);
 
-    if (articles) {
-      return res.send(article);
-    } else {
-      return res.status(404).send("Article not found");
-    }
-  });
+  if (articles) {
+    return res.send(article);
+  } else {
+    return res.status(404).send("Article not found");
+  }
+});
 
 
 /**

@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import Article from "../models/articlesModel.js";
+import Article from "../models/articleModelMongo.js";
 
 import auth from "../utils/authMiddleware.js";
 
@@ -10,7 +10,7 @@ import {
   getArticleByTitle,
   postArticle,
   updateArticle,
-    getPaginatedArticles,
+  getPaginatedArticles,
 } from "../models/articleModel.js";
 
 const router = Router();

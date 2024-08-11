@@ -1,9 +1,22 @@
-import connection from '../database/connection.js';
+import connection from "../database/connection.js";
+
+// Get User Likes
+async function getUserLikes(userId) {
+  const [rows] = await connection.execute(
+    `SELECT * FROM Likes
+    WHERE user_id = ?`,
+    [userId]
+  );
+  return rows;
+}
 
 // Get all likes
 async function allLikes(articleId) {
-  const [rows] = await connection.execute(`SELECT * FROM Likes
-    WHERE article_id = ?`, [articleId]);
+  const [rows] = await connection.execute(
+    `SELECT * FROM Likes
+    WHERE article_id = ?`,
+    [articleId]
+  );
   return rows;
 }
 
@@ -84,13 +97,14 @@ async function getLikeCountAll(userId) {
 }
 
 export {
-  getLikeCountAll,
-  getUserLikeCount,
-  getLikeCount,
   allLikes,
   createLike,
   deleteLike,
+  getLikeByArticleId,
   getLikeById,
   getLikeByUserId,
-  getLikeByArticleId,
+  getLikeCount,
+  getLikeCountAll,
+  getUserLikeCount,
+  getUserLikes,
 };

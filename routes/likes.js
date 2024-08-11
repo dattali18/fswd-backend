@@ -1,6 +1,13 @@
 import { Router } from "express";
 
-import { createLike, deleteLike, getLikeCountAll, getUserLikeCount, getLikeCount } from "../models/likeModel.js";
+import {
+  createLike,
+  deleteLike,
+  getLikeCount,
+  getLikeCountAll,
+  getUserLikeCount,
+  getUserLikes,
+} from "../models/likeModel.js";
 
 const router = Router();
 
@@ -113,6 +120,25 @@ router.get("/count", async (req, res) => {
     return res
       .status(500)
       .send("An error occurred while getting the like count");
+  }
+});
+
+/**
+ * @desc Get all the like a user has liked across all articles
+ * @route GET /api/likes?user_id={user_id}
+ * @access Public
+ * @param user_id
+ * @returns {array} - Array of articles liked by user {user_id}
+ */
+router.get("/", async (req, res) => {
+  const userId = req.query.user_id;
+   console.log(userId);
+  try {
+    const likes = await getUserLikes(userId);
+    return res.json(likes);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("An error occurred while getting the likes");
   }
 });
 

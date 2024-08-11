@@ -33,6 +33,7 @@ router.post("/register", async (req, res) => {
 
   // the rest of the data will be added later
   const hashedPassword = await hash(password, 10);
+
   const newUser = {
     user_name: "",
     first_name: "",

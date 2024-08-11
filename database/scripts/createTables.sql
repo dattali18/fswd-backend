@@ -46,11 +46,3 @@ CREATE TABLE Likes (
 -- Insert a default admin user
 INSERT INTO Users (user_name, first_name, last_name, email, password, is_writer, is_admin)
 VALUES ('admin', 'Admin', 'User', 'admin@example.com', 'hashed_password_here', TRUE, TRUE);
-
--- Insert a default writer user
-INSERT INTO Users (user_name, first_name, last_name, email, password, is_writer)
-VALUES ('writer', 'Writer', 'User', 'writer@example.com', 'hashed_password_here', TRUE);
-
--- Insert a default reader user
-INSERT INTO Users (user_name, first_name, last_name, email, password)
-VALUES ('reader', 'Reader', 'User', 'reader@example.com', 'hashed_password_here');

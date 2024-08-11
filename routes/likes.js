@@ -132,7 +132,7 @@ router.get("/count", async (req, res) => {
  */
 router.get("/", async (req, res) => {
   const userId = req.query.user_id;
-   console.log(userId);
+   // console.log(userId);
   try {
     const likes = await getUserLikes(userId);
     return res.json(likes);

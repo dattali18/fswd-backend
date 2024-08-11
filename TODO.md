@@ -6,10 +6,10 @@
 
 #### Articles
 
-- [ ] Create a route to list all of a users article
-- [ ] Create a route to list all articles that a user has liked
-- [ ] Create a route to list all articles that a user has commented on
+- [x] Create a route to list all of a users article
+- [x] Create a route to list all articles that a user has liked
+- [x] Create a route to list all articles that a user has commented on
 
 ## auth
 
-- [ ] add a middleware to check if the user is admin
+- [x] add a middleware to check if the user is admin

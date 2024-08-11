@@ -6,6 +6,7 @@ import auth from "../utils/authMiddleware.js";
 
 import {
   getAllArticles,
+  getAllUserArticles,
   getArticleById,
   getArticleByTitle,
   postArticle,
@@ -70,6 +71,7 @@ router.get("/:article_id", async (req, res) => {
  */
 router.post("/", async (req, res) => {
   const { writer_id, title, content, tags } = req.body;
+
   try {
     const [response] = await postArticle({ writer_id, title });
 
@@ -99,46 +101,44 @@ router.post("/", async (req, res) => {
 
 /**
  * @route GET api/articles
+ * @param user - the id of the user
  * @param title - the title of the article to search for if no title is given return all articles
  * @param page - the page number to get the articles from
  * @param limit - the number of articles to get
  * @desc Get the article with the title = title
  * */
 router.get("/", async (req, res) => {
-  const title = req.query.title;
+  const user = req.query.user;
 
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
-
-  if (!title) {
-    const articles = await getPaginatedArticles(page, limit);
+  if(user) {
+    const articles = await getAllUserArticles(user);
     return res.send(articles);
   }
 
-  const [article] = await getArticleByTitle(title);
+  const title = req.query.title;
 
-  if (article) {
-    return res.send(article);
-  } else {
-    return res.status(404).send("Article not found");
+  if(title) {
+    const [article] = await getArticleByTitle(title);
+    if (article) {
+      return res.send(article);
+    } else {
+      return res.status(404).send("Article not found");
+    }
   }
-});
 
-// // FIXME: fix the route
-// // GET - api/articles/best?time_period=day
-// router.get("/best", async (req, res) => {
-//   const time_period = req.query.time_period;
-//   const limit = req.query.limit;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
 
-//   // if there is no time_period give the best from last week
-//   try {
-//     const articles = await getBestArticles(time_period || "week", limit || 5);
-//     return res.send(articles);
-//   } catch (error) {
-//     // console.log(error)
-//     return res.status(500).send("Error getting best articles");
-//   }
-// });
+
+    const articles = await getPaginatedArticles(page, limit);
+
+    if (articles) {
+      return res.send(article);
+    } else {
+      return res.status(404).send("Article not found");
+    }
+  });
+
 
 /**
  * @desc Update the content of the article

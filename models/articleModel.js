@@ -1,5 +1,14 @@
 import connection from "../database/connection.js";
 
+async function getAllUserArticles(user_id) {
+    const [rows] = await connection.execute(
+        `SELECT * FROM Articles WHERE writer_id = ?`,
+        [user_id]
+    );
+
+    return rows;
+}
+
 async function getBestArticles(time_period = "week", limit = 5) {
   let days = 7;
 
@@ -135,6 +144,7 @@ async function updateArticle(article_id, title) {
 }
 
 export {
+    getAllUserArticles,
   getBestArticles,
   postArticle,
   getArticleByTitle,

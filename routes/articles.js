@@ -5,14 +5,13 @@ import Article from "../models/articleModelMongo.js";
 import auth from "../utils/authMiddleware.js";
 
 import {
-  getAllArticles,
   getAllUserArticles,
   getArticleById,
   getArticleByTitle,
+  getBestArticles,
+  getPaginatedArticles,
   postArticle,
   updateArticle,
-  getPaginatedArticles,
-  getBestArticles,
 } from "../models/articleModel.js";
 
 const router = Router();
@@ -142,17 +141,16 @@ router.get("/search", async (req, res) => {
   const title = req.query.title;
 
   if (title) {
-    const [article] = await getArticleByTitle(title);
-    if (article) {
-      return res.send(article);
+    const articles = await getArticleByTitle(title);
+    if (articles) {
+      return res.send(articles);
     } else {
-      return res.status(404).send("Article not found");
+      return res.status(404).send("Articles not found");
     }
   }
 
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
-
 
   const articles = await getPaginatedArticles(page, limit);
 
@@ -162,7 +160,6 @@ router.get("/search", async (req, res) => {
     return res.status(404).send("Article not found");
   }
 });
-
 
 /**
  * @desc Update the content of the article

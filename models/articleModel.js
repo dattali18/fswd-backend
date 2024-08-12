@@ -9,10 +9,8 @@ async function getAllUserArticles(user_id) {
   return rows;
 }
 
-async function getBestArticles(time_period = "week") {
+async function getBestArticles(time_period = "week", limit = 5) {
   let days = 7;
-
-  const limit = 5;
 
   switch (time_period) {
     case "week":
@@ -30,10 +28,18 @@ async function getBestArticles(time_period = "week") {
   }
 
   // select all the articles that have been created within the last 'days' days
+  // const [rows] = await connection.execute(
+  //   `
+  //       SELECT * FROM Articles 
+  //       WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) 
+  //       ORDER BY created_at DESC
+  //       LIMIT ?
+  //   `,
+  //   [days, limit]
+  // );
+
   const [rows] = await connection.execute(
-    `SELECT * FROM Articles
-         ORDER BY created_at DESC
-         LIMIT ?`,
+    "SELECT * FROM Articles ORDER BY created_at DESC LIMIT ?",
     [limit]
   );
 

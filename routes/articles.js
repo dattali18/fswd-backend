@@ -19,11 +19,11 @@ const router = Router();
 
 /**
  * @desc Get the best articles within a specified time period
- * @route GET api/articles/best
+ * @route GET api/articles/latest
  * @access Public
  * @param time_period - the time period to filter best articles (e.g., 'week', 'month')
  */
-router.get("/best", async (req, res) => {
+router.get("/latest", async (req, res) => {
   const time_period = req.query.time_period || "week"; // default to "week" if no time_period is specified
 
   try {
@@ -64,11 +64,11 @@ router.get("/:article_id/content", async (req, res) => {
 
 /**
  * @desc Get the article object
- * @route GET /api/articles/:article_id
+ * @route GET /api/articles/:article_id/object
  * @access Public
  * @param article_id
  */
-router.get("/:article_id", async (req, res) => {
+router.get("/:article_id/object", async (req, res) => {
   // get the article object form the MySQL database
   const article_id = req.params.article_id;
 
@@ -124,14 +124,14 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * @route GET api/articles
+ * @route GET api/articles/search
  * @param user - the id of the user
  * @param title - the title of the article to search for if no title is given return all articles
  * @param page - the page number to get the articles from
  * @param limit - the number of articles to get
  * @desc Get the article with the title = title
  * */
-router.get("/", async (req, res) => {
+router.get("/search", async (req, res) => {
   const user = req.query.user;
 
   if (user) {
